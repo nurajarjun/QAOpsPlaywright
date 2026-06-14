@@ -1,0 +1,12 @@
+[
+  {
+    "role":     "standard",
+    "username": "anshikaw@gmail.com",
+    "password": "Learning@830$3mK3"
+  },
+  {
+    "role":     "invalid",
+    "username": "wrong@email.com",
+    "password": "wrongpassword"
+  }
+]

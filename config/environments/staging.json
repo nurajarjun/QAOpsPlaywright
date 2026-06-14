@@ -1,0 +1,7 @@
+{
+  "baseUrl": "https://staging.rahulshettyacademy.com",
+  "apiBaseUrl": "https://staging.rahulshettyacademy.com/api/ecom",
+  "timeout": 45000,
+  "retries": 1,
+  "headless": true
+}

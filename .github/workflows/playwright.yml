@@ -1,32 +1,149 @@
 name: Playwright Tests
+
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Which tests to run?'
+        required: true
+        default: 'All Tests'
+        type: choice
+        options:
+          - All Tests
+          - API Tests only (EventHub + Ecom)
+          - EventHub Auth
+          - EventHub Events
+          - EventHub Bookings
+          - EventHub Health
+          - Ecom Orders API
+          - SOAP Version (internal network only)
+          - E2E Order Flow
+          - UI Tests
+          - Tag - @API
+          - Tag - @Web
+          - Tag - @E2E
+
+      workers:
+        description: 'Parallel workers'
+        required: true
+        default: '2'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '4'
+
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+      username:
+        description: 'Login email (leave blank to use default from test data)'
+        required: false
+        default: ''
+        type: string
+
+      password:
+        description: 'Login password (leave blank to use default from test data)'
+        required: false
+        default: ''
+        type: string
+
+      product_name:
+        description: 'Product name to order (leave blank to use default from test data)'
+        required: false
+        default: ''
+        type: string
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v5
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
 
-    - name: Azure Login
-      uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Run Playwright tests
-      env:
-        PLAYWRIGHT_SERVICE_URL: ${{ vars.PLAYWRIGHT_SERVICE_URL }}
-      run: npx playwright test --config=playwright.service.config.js --workers=4
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Set test command
+        id: test-cmd
+        run: |
+          SUITE="${{ github.event.inputs.test_suite || 'All Tests' }}"
+          WORKERS="${{ github.event.inputs.workers || '2' }}"
+          BASE="npx playwright test --config=config/playwright.config.ts --project=chromium --workers=$WORKERS"
+
+          case "$SUITE" in
+            "API Tests only (EventHub + Ecom)")
+              # Run all API specs except SOAP (private IP unreachable from GitHub)
+              echo "cmd=$BASE tests/api/auth.spec.ts tests/api/events.spec.ts tests/api/bookings.spec.ts tests/api/health.spec.ts tests/api/orders-api.spec.ts" >> $GITHUB_OUTPUT ;;
+            "EventHub Auth")
+              echo "cmd=$BASE tests/api/auth.spec.ts" >> $GITHUB_OUTPUT ;;
+            "EventHub Events")
+              echo "cmd=$BASE tests/api/events.spec.ts" >> $GITHUB_OUTPUT ;;
+            "EventHub Bookings")
+              echo "cmd=$BASE tests/api/bookings.spec.ts" >> $GITHUB_OUTPUT ;;
+            "EventHub Health")
+              echo "cmd=$BASE tests/api/health.spec.ts" >> $GITHUB_OUTPUT ;;
+            "Ecom Orders API")
+              echo "cmd=$BASE tests/api/orders-api.spec.ts" >> $GITHUB_OUTPUT ;;
+            "SOAP Version (internal network only)")
+              echo "cmd=$BASE tests/api/soap-version.spec.ts" >> $GITHUB_OUTPUT ;;
+            "E2E Order Flow")
+              echo "cmd=$BASE tests/e2e/order-flow.spec.ts" >> $GITHUB_OUTPUT ;;
+            "UI Tests")
+              echo "cmd=$BASE tests/ui/" >> $GITHUB_OUTPUT ;;
+            "Tag - @API")
+              echo "cmd=$BASE --grep @API" >> $GITHUB_OUTPUT ;;
+            "Tag - @Web")
+              echo "cmd=$BASE --grep @Web" >> $GITHUB_OUTPUT ;;
+            "Tag - @E2E")
+              echo "cmd=$BASE --grep @E2E" >> $GITHUB_OUTPUT ;;
+            *)
+              # All Tests — skip SOAP because 216.10.245.166 is not reachable from GitHub
+              echo "cmd=$BASE tests/api/auth.spec.ts tests/api/events.spec.ts tests/api/bookings.spec.ts tests/api/health.spec.ts tests/api/orders-api.spec.ts tests/e2e/ tests/ui/" >> $GITHUB_OUTPUT ;;
+          esac
+
+      - name: Run Playwright tests
+        env:
+          TEST_ENV:      ${{ github.event.inputs.environment || 'dev' }}
+          TEST_USERNAME: ${{ github.event.inputs.username }}
+          TEST_PASSWORD: ${{ github.event.inputs.password }}
+          TEST_PRODUCT:  ${{ github.event.inputs.product_name }}
+        run: ${{ steps.test-cmd.outputs.cmd }}
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: reports/html/
+          retention-days: 30
+
+      - name: Upload test results (traces + screenshots)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 7

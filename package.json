@@ -1,13 +1,17 @@
 {
-  "name": "PlayWrightAutomation",
+  "name": "QAOpsPlaywright",
   "version": "1.0.0",
-  "description": "",
+  "description": "Playwright E2E test automation framework",
   "main": "index.js",
   "scripts": {
-    "regression": "npx playwright test",
-    "webTests": "npx playwright test --grep @Web",
-    "APITests": "npx playwright test --grep @API",
-    "SafariNewConfig": "npx playwright test --config playwright.config1.js --project=safari"
+    "test":          "npx playwright test --config=config/playwright.config.ts",
+    "test:e2e":      "npx playwright test --config=config/playwright.config.ts tests/e2e/",
+    "test:api":      "npx playwright test --config=config/playwright.config.ts tests/api/",
+    "test:ui":       "npx playwright test --config=config/playwright.config.ts tests/ui/",
+    "test:dev":      "TEST_ENV=dev npx playwright test --config=config/playwright.config.ts",
+    "test:staging":  "TEST_ENV=staging npx playwright test --config=config/playwright.config.ts",
+    "test:prod":     "TEST_ENV=prod npx playwright test --config=config/playwright.config.ts",
+    "report":        "npx playwright show-report reports/html"
   },
   "keywords": [],
   "author": "",

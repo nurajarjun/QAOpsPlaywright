@@ -1,0 +1,9 @@
+services:
+  playwright:
+    build: .
+    volumes:
+      - ./reports:/app/reports
+      - ./test-results:/app/test-results
+    environment:
+      - CI=true
+      - TEST_ENV=dev

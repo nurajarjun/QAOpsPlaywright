@@ -1,0 +1,28 @@
+{
+  "users": {
+    "valid": {
+      "email":    "qatest_{{timestamp}}@mailinator.com",
+      "password": "Test@12345"
+    },
+    "invalid": {
+      "email":    "notexist@mailinator.com",
+      "password": "wrongpassword"
+    }
+  },
+  "event": {
+    "title":       "QA Automation Summit 2026",
+    "category":    "Technology",
+    "venue":       "Tech Convention Center",
+    "city":        "Bangalore",
+    "eventDate":   "2026-12-15T09:00:00.000Z",
+    "price":       999,
+    "totalSeats":  50,
+    "description": "Annual QA and automation conference"
+  },
+  "booking": {
+    "customerName":  "QA Tester",
+    "customerEmail": "qatester@mailinator.com",
+    "customerPhone": "9876543210",
+    "quantity":      2
+  }
+}
