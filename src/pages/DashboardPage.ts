@@ -25,7 +25,7 @@ export class DashboardPage extends BasePage {
   }
 
   async navigateToOrders(): Promise<void> {
-    await this.page.goto(URLS.ORDERS_HISTORY);
+    await this.locator("button[routerlink*='myorders']").click();
     await this.waitForPageLoad();
   }
 }

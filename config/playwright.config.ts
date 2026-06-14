@@ -30,7 +30,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // On Windows locally, use the system Chrome to avoid Playwright's headless-shell
+        // download requirement. CI uses the Playwright-managed Chromium as normal.
+        ...(process.platform === 'win32' && !process.env.CI ? { channel: 'chrome' } : {}),
+      },
     },
     {
       name: 'webkit',

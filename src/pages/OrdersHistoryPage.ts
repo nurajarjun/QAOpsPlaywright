@@ -7,8 +7,17 @@ export class OrdersHistoryPage extends BasePage {
   }
 
   async searchOrderAndSelect(orderId: string): Promise<void> {
-    await this.locator(`tr:has-text("${orderId}")`).locator('button').first().click();
-    await this.waitForPageLoad();
+    const rows = this.page.locator('tbody tr');
+    await this.page.locator('tbody').waitFor();
+    const count = await rows.count();
+    for (let i = 0; i < count; i++) {
+      const rowId = (await rows.nth(i).locator('th').textContent()) ?? '';
+      if (orderId.includes(rowId.trim())) {
+        await rows.nth(i).locator('button').first().click();
+        await this.waitForPageLoad();
+        return;
+      }
+    }
   }
 
   async getOrderId(): Promise<string> {

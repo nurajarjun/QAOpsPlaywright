@@ -18,9 +18,15 @@ export class LoginPage extends BasePage {
     await this.waitForPageLoad();
   }
 
-  async getErrorMessage(): Promise<string> {
-    const el = this.locator('[style*="block"]');
-    await el.waitFor({ timeout: 10000 });
-    return (await el.textContent()) ?? '';
+  async loginExpectingError(username: string, password: string): Promise<string> {
+    await this.locator('#userEmail').fill(username);
+    await this.locator('#userPassword').fill(password);
+    // Start watching for the error toast BEFORE clicking — it appears and disappears
+    // quickly, so waitFor + click must race together to avoid missing it.
+    await Promise.all([
+      this.page.locator('[style*="block"]').waitFor({ state: 'visible', timeout: 10000 }),
+      this.locator('[value="Login"]').click(),
+    ]);
+    return (await this.page.locator('[style*="block"]').textContent()) ?? '';
   }
 }

@@ -16,7 +16,8 @@ export class OrdersReviewPage extends BasePage {
   async submitAndGetOrderId(): Promise<string> {
     await this.locator('.action__submit').click();
     await this.waitForPageLoad();
-    const orderId = await this.locator('.em-spacer-1 .ng-star-inserted').textContent();
-    return orderId?.trim() ?? '';
+    const raw = await this.locator('.em-spacer-1 .ng-star-inserted').textContent();
+    // Text content may include surrounding pipe characters e.g. "| abc123 |" — strip them
+    return raw?.replace(/\|/g, '').trim() ?? '';
   }
 }

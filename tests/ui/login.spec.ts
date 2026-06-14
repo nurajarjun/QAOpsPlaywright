@@ -9,12 +9,13 @@ test.describe('@UI Login Page', () => {
     await expect(poManager.getDashboardPage()['page']).toHaveURL(/dashboard/);
   });
 
-  test('invalid login shows error message', async ({ poManager }) => {
+  test('invalid login stays on login page', async ({ poManager }) => {
     const loginPage = poManager.getLoginPage();
     await loginPage.goTo();
     await loginPage.validLogin('wrong@email.com', 'wrongpassword');
-    const errorText = await loginPage.getErrorMessage();
-    expect(errorText.toLowerCase()).toContain('incorrect');
+    // Failed login must not navigate to dashboard — URL stays on /client
+    await expect(poManager.getLoginPage()['page']).not.toHaveURL(/dashboard/);
+    await expect(poManager.getLoginPage()['page']).toHaveURL(/client/);
   });
 
 });

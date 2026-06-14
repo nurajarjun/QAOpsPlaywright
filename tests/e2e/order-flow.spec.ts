@@ -3,6 +3,7 @@ import { test, expect } from '../../src/fixtures/index.js';
 test.describe('@E2E Order Flow', () => {
 
   test('complete order journey — login to confirmation', async ({ poManager, testDataForOrder }) => {
+    test.setTimeout(90_000); // full E2E flow needs more than the 30s global timeout
     const { username, password, productName } = testDataForOrder;
 
     const loginPage     = poManager.getLoginPage();
