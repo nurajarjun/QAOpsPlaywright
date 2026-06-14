@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
-import { LoginPage }         from './LoginPage';
-import { DashboardPage }     from './DashboardPage';
-import { CartPage }          from './CartPage';
-import { OrdersReviewPage }  from './OrdersReviewPage';
-import { OrdersHistoryPage } from './OrdersHistoryPage';
+import { LoginPage }         from './LoginPage.js';
+import { DashboardPage }     from './DashboardPage.js';
+import { CartPage }          from './CartPage.js';
+import { OrdersReviewPage }  from './OrdersReviewPage.js';
+import { OrdersHistoryPage } from './OrdersHistoryPage.js';
 
 export class POManager {
   private loginPage:         LoginPage;

@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
-import { BasePage } from './BasePage';
-import { URLS } from '../constants';
+import { BasePage } from './BasePage.js';
+import { URLS } from '../constants/index.js';
 
 export class DashboardPage extends BasePage {
   constructor(page: Page) {

@@ -1,4 +1,4 @@
-import { test, expect } from '../../src/fixtures';
+import { test, expect } from '../../src/fixtures/index.js';
 
 test.describe('@UI Calendar / Date Picker', () => {
 

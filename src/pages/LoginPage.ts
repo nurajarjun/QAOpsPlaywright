@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
-import { BasePage } from './BasePage';
-import { URLS } from '../constants';
+import { BasePage } from './BasePage.js';
+import { URLS } from '../constants/index.js';
 
 export class LoginPage extends BasePage {
   constructor(page: Page) {
@@ -16,5 +16,11 @@ export class LoginPage extends BasePage {
     await this.locator('#userPassword').fill(password);
     await this.locator('[value="Login"]').click();
     await this.waitForPageLoad();
+  }
+
+  async getErrorMessage(): Promise<string> {
+    const el = this.locator('[style*="block"]');
+    await el.waitFor({ timeout: 10000 });
+    return (await el.textContent()) ?? '';
   }
 }

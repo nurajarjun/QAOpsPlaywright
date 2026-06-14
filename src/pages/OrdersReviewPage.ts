@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { BasePage } from './BasePage.js';
 
 export class OrdersReviewPage extends BasePage {
   constructor(page: Page) {
@@ -9,7 +9,8 @@ export class OrdersReviewPage extends BasePage {
   async searchCountryAndSelect(searchText: string, country: string): Promise<void> {
     await this.locator('[placeholder="Select Country"]').pressSequentially(searchText);
     await this.page.locator('.ta-results').waitFor();
-    await this.page.locator(`.ta-item:has-text("${country}")`).click();
+    // Use filter with exact regex to avoid matching partial names (e.g. "British Indian Ocean" when searching "India")
+    await this.page.locator('.ta-item').filter({ hasText: new RegExp(`^\\s*${country}\\s*$`) }).click();
   }
 
   async submitAndGetOrderId(): Promise<string> {
