@@ -83,6 +83,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Playwright ffmpeg
+        run: npx playwright install ffmpeg
+
       - name: Set test command
         id: test-cmd
         run: |
