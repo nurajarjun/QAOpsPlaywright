@@ -32,9 +32,10 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        // On Windows locally, use the system Chrome to avoid Playwright's headless-shell
-        // download requirement. CI uses the Playwright-managed Chromium as normal.
-        ...(process.platform === 'win32' && !process.env.CI ? { channel: 'chrome' } : {}),
+        // Use system Chrome everywhere: avoids Playwright's browser download entirely.
+        // Windows has Chrome at C:\Program Files\Google\Chrome\Application\chrome.exe
+        // GitHub ubuntu-latest runners have google-chrome-stable pre-installed.
+        channel: 'chrome',
       },
     },
     {

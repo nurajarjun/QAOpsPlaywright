@@ -69,13 +69,16 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
-      options: --ipc=host
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
