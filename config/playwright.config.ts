@@ -22,7 +22,7 @@ export default defineConfig({
     baseURL:       envConfig.baseUrl,
     headless:      envConfig.headless,
     screenshot:    'only-on-failure',
-    video:         'retain-on-failure',
+    video:         process.env.CI ? 'off' : 'retain-on-failure',
     trace:         'retain-on-failure',
     ignoreHTTPSErrors: true,
   },
