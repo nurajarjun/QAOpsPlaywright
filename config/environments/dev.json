@@ -2,6 +2,6 @@
   "baseUrl": "https://rahulshettyacademy.com",
   "apiBaseUrl": "https://rahulshettyacademy.com/api/ecom",
   "timeout": 30000,
-  "retries": 0,
+  "retries": 1,
   "headless": true
 }
