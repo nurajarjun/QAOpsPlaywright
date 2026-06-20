@@ -48,19 +48,19 @@ on:
           - prod
 
       username:
-        description: 'Login email (leave blank to use default from test data)'
+        description: 'Login email — leave blank to use ECOM_USERNAME secret'
         required: false
         default: ''
         type: string
 
       password:
-        description: 'Login password (leave blank to use default from test data)'
+        description: 'Login password — leave blank to use ECOM_PASSWORD secret'
         required: false
         default: ''
         type: string
 
       product_name:
-        description: 'Product name to order (leave blank to use default from test data)'
+        description: 'Product name to order — leave blank to use ECOM_PRODUCT secret or test data default'
         required: false
         default: ''
         type: string
@@ -124,9 +124,9 @@ jobs:
       - name: Run Playwright tests
         env:
           TEST_ENV:      ${{ github.event.inputs.environment || 'dev' }}
-          TEST_USERNAME: ${{ github.event.inputs.username }}
-          TEST_PASSWORD: ${{ github.event.inputs.password }}
-          TEST_PRODUCT:  ${{ github.event.inputs.product_name }}
+          TEST_USERNAME: ${{ github.event.inputs.username || secrets.ECOM_USERNAME }}
+          TEST_PASSWORD: ${{ github.event.inputs.password || secrets.ECOM_PASSWORD }}
+          TEST_PRODUCT:  ${{ github.event.inputs.product_name || secrets.ECOM_PRODUCT }}
         run: ${{ steps.test-cmd.outputs.cmd }}
 
       - name: Upload HTML report

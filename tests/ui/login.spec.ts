@@ -1,6 +1,12 @@
 import { test, expect } from '../../src/fixtures/index.js';
 
+const HAS_CREDS = !!(process.env.TEST_USERNAME && process.env.TEST_PASSWORD);
+
 test.describe('@UI Login Page', () => {
+
+  test.beforeAll(() => {
+    if (!HAS_CREDS) test.skip(true, 'UI tests require credentials — set TEST_USERNAME and TEST_PASSWORD (or store as ECOM_USERNAME / ECOM_PASSWORD secrets in GitHub)');
+  });
 
   test('valid login navigates to dashboard', async ({ poManager, testDataForOrder }) => {
     const loginPage = poManager.getLoginPage();

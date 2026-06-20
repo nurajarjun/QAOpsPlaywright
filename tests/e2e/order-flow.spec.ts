@@ -1,6 +1,12 @@
 import { test, expect } from '../../src/fixtures/index.js';
 
+const HAS_CREDS = !!(process.env.TEST_USERNAME && process.env.TEST_PASSWORD);
+
 test.describe('@E2E Order Flow', () => {
+
+  test.beforeAll(() => {
+    if (!HAS_CREDS) test.skip(true, 'E2E tests require credentials — set TEST_USERNAME and TEST_PASSWORD (or store as ECOM_USERNAME / ECOM_PASSWORD secrets in GitHub)');
+  });
 
   test('complete order journey — login to confirmation', async ({ poManager, testDataForOrder }) => {
     test.setTimeout(90_000); // full E2E flow needs more than the 30s global timeout
