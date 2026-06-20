@@ -3,6 +3,7 @@ allure-report/
 allure-results/
 playwright-report/
 test-results/
+reports/
 *.png
 state.json
 temp_explore.js

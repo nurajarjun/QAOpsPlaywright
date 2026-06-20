@@ -1,6 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
-import { LoginPayload, OrderPayload, ApiResponse } from '../types';
-import { API_ENDPOINTS } from '../constants';
+import { LoginPayload, OrderPayload, ApiResponse } from '../types/index.js';
+import { API_ENDPOINTS } from '../constants/index.js';
 
 const API_BASE = process.env.API_BASE_URL || 'https://rahulshettyacademy.com/api/ecom';
 
